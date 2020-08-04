@@ -1,0 +1,40 @@
+
+
+
+.drag{
+    -webkit-app-region: drag;
+}
+.no-drag{
+    -webkit-app-region: no-drag;
+}
+.no-select{
+    -moz-user-select:none;
+
+      -webkit-user-select:none;
+
+      user-select:none; 
+}
+.c-pointer {
+	cursor: pointer;
+}
+.c-active-opacity{
+    opacity: 0.8;
+    transition: opacity 0.3s;
+	user-select: none;
+}
+.c-active-opacity:hover{
+    opacity: 1;
+}
+
+
+::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #373E5B;
+    border-radius: 3.5px;
+  }
+  ::-webkit-scrollbar-track-piece {
+    background: #efefef;
+  }
