@@ -1,6 +1,6 @@
 <template>
   <div>
-    <ct :allProject="allProject" :index="index" :isSearch="isSearch"></ct>
+    <ct :allProject="allProject" :index="index" ></ct>
     <transition mode="out-in">
       <div class="content" v-if="viewStyle=='card'" key="card">
         <div v-if="index!=2">

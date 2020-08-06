@@ -66,7 +66,7 @@
 </template>
 <script>
 export default {
-  props: ["allProject",'index','isSearch'],
+  props: ["allProject",'index'],
   data() {
     return {
       id: 1,
@@ -103,6 +103,9 @@ export default {
     "$store.state.viewStyle": function (to, from) {
       this.viewStyle = to;
     },
+    "$store.state.images_path": function (to, from) {
+      this.key=''
+    }
   },
 };
 </script>
