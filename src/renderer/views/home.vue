@@ -29,6 +29,7 @@
 </template>
 <script>
 import ct from "../components/ContentTop";
+
 export default {
   components: { ct },
   props: ["allProject"],
@@ -37,7 +38,9 @@ export default {
       viewStyle:'card'
     };
   },
-
+  created(){
+    
+  },
   methods: {
     qh() {
       this.isqh = !this.isqh;

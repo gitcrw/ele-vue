@@ -9,12 +9,14 @@ let allProjectUrl = '/project/all'
 let folderProjectUrl = '/folder/project'
 //进入文件夹
 let floderDetailUrl = '/folder/detail'
-
-
+//创建项目
+let createProUrl = '/assignment/save'
 
 
 function POST_LOGIN (params) {
-  return request(LoginUrl,'post',params)
+  let headers ={'Content-Type': 'application/x-www-form-urlencoded'}
+  console.log(headers)
+  return request(LoginUrl,'post',params,headers)
 }
 function GET_ROLEPROMISE (params) {
   return request(rolePromiseUrl, 'get',params)
@@ -29,11 +31,17 @@ function GET_FOLDERDETAIL (params) {
   return request(floderDetailUrl,'get', params)
 }
 
+function POST_CREATEPRO (params) {
+  let headers={'Content-Type': 'application/json'}
+  return request(createProUrl,'post',params,headers,false)
+}
+
 const api = {
   POST_LOGIN,
   GET_ALLPROJECT,
   GET_ROLEPROMISE,
   GET_FOLDERPROJECT,
-  GET_FOLDERDETAIL
+  GET_FOLDERDETAIL,
+  POST_CREATEPRO
 }
 export default api

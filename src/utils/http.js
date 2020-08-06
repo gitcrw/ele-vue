@@ -10,11 +10,11 @@ axios.defaults.headers['Content-Type']  =  'application/x-www-form-urlencoded;
 // http request 拦截器
 axios.interceptors.request.use(
   config => {
-    config.data = qs.stringify(config.data)
-    config.headers = {
-      'Content-Type': 'application/x-www-form-urlencoded',
-      'x-oss-token': localStorage.getItem('token')
-    }
+    // config.data = qs.stringify(config.data)
+    config.headers['x-oss-token'] = localStorage.getItem('token')
+      // 'Content-Type': 'application/x-www-form-urlencoded',
+      // 'x-oss-token': localStorage.getItem('token')
+    
     return config
   },
   error => {
@@ -39,13 +39,15 @@ axios.interceptors.request.use(
 // )
 
 // request
-export  function request(url, method, params = {}) {
+export  function request(url, method, params = {},headers={},isQS=true) {
 	// 首先判断是get请求还是post请求
-	let data = method.toLocaleLowerCase() === 'get' ? 'params' : 'data';
+  let data = method.toLocaleLowerCase() === 'get' ? 'params' : 'data';
+  console.log(headers,isQS)
 	return axios({
+      headers,
     	method,
     	url,
-    	[data]: params // 差异点在于data的值
+      [data]: method.toLocaleLowerCase() === 'get' ?params:isQS?qs.stringify(params):params, // 差异点在于data的值,默认处理格式
 	}).then((res) => {
     	return Promise.resolve(res.data);
 	}).catch((err) => {

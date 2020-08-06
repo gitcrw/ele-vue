@@ -7,7 +7,8 @@ const store = new Vuex.Store({
     state: {
       images_path:[],
       sy_path:[],
-      viewStyle:'card'
+      viewStyle:'card',
+      searchKey:''
     },
     mutations: {
       sy_path(state, payload) {
@@ -21,6 +22,9 @@ const store = new Vuex.Store({
       },
       viewStyle(state,payload){
         state.viewStyle = payload
+      },
+      searchKey(state,payload){
+        state.searchKey = payload
       }
     }
 })

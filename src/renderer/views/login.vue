@@ -32,7 +32,8 @@ export default{
         // 发送登录成功给主进程
         ipcRenderer.send('into')
         this.$router.push('/main/home')
-        localStorage.setItem('token', res.data.data.token)
+        this.$global.lcStorage('set',{name:'token',value:res.data.token})
+        this.$global.lcStorage('set',{name:'userInfo',value:res.data})
       })
       // this.$http({
       //   url: 'http://192.168.41.220:2030',

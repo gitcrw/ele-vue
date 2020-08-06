@@ -32,6 +32,7 @@ export default {
     }
   },
   created () {
+    
     // 角色拥有的权限
     this.$api.GET_ROLEPROMISE().then(res => {
       console.log(res)
@@ -63,6 +64,7 @@ export default {
         .content{
             height: 92%;
             background: #fff;
+            overflow-y: auto;
         }
     }
 </style>

@@ -1,5 +1,12 @@
 
-
+input{  
+	background:none;  
+	outline:none;  
+	border:1px solid #ccc;
+}
+/* input:focus{   
+	border:none;
+} */
 
 .drag{
     -webkit-app-region: drag;
