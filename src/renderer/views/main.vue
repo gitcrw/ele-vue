@@ -5,7 +5,7 @@
             <left-side :authority="authority"/>
         </div>
         <div class="rightSide">
-            <top-menu></top-menu>
+            <top-menu @handleShow = "getType"></top-menu>
             
               <div class="content no-drag">
                 <keep-alive>
@@ -14,6 +14,10 @@
               </div>
             
         </div>
+				
+				<notify-top ref="notify"></notify-top>
+				<systemSetting ref="system"></systemSetting>  //菜鸟写的辣鸡弹框
+				
         <!-- 遮罩层 -->
         <div class="mb"  v-if="mb"></div>
         <!-- 弹出框 -->
@@ -30,12 +34,16 @@ import LeftSide from '../components/LeftSide'
 import TopMenu from '../components/TopMenu'
 import PeopleInfo from '../components/peopleInfo'
 import ResvisePwd from '../components/resvisePwd'
+import notifyTop from '@/components/notifyTop'
+import systemSetting from '@/components/systemSetting'
 export default {
   components: {
     LeftSide,
     TopMenu,
     PeopleInfo,
-    ResvisePwd
+    ResvisePwd,
+		systemSetting,
+		notifyTop
   },
   data () {
     return {
@@ -46,7 +54,12 @@ export default {
     }
   },
   methods:{
-    
+    getType(data) {
+			console.log(data, 'data')
+			data === 1
+			? this.$refs.system.show = true
+			: this.$refs.notify.show = true
+		}
   },
   created () {
     // 角色拥有的权限
