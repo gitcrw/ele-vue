@@ -16,7 +16,7 @@
         </div>
 				
 				<notify-top ref="notify"></notify-top>
-				<systemSetting ref="system"></systemSetting>  //菜鸟写的辣鸡弹框
+				<systemSetting ref="system"></systemSetting>
 				
         <!-- 遮罩层 -->
         <div class="mb"  v-if="mb"></div>

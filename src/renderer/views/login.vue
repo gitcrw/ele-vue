@@ -1,6 +1,6 @@
 <template>
   <transition name="fade">
-  	<div class="login-wrap drag" v-show="show">
+  	<div class="login-wrap drag" >
   		<div class="wrap-left">
   			<img :src="require('@/assets/images/login_img1.png')" class="content-1 c-cover"/>
   			<div class="content-2">
@@ -33,7 +33,7 @@ export default{
       hh: '',
 			username: '',
 			password: '',
-			show: true
+
     }
   },
   methods: {
@@ -44,21 +44,25 @@ export default{
 				this.$message.error('请输入密码')
 			} else {
 				setTimeout(() => {
-					this.show = false
+
 					setTimeout(() => {
 						let data = {
-							username: 'crw',
-							password: '123456'
+							username: this.username,
+							password: this.password
 						}
 						this.$api.POST_LOGIN(data).then(res => {
-							// 发送登录成功给主进程
-							ipcRenderer.send('into')
-							this.$router.push('/main/home')
-							this.$global.lcStorage('set',{name:'token',value:res.data.token})
-							this.$global.lcStorage('set',{name:'userInfo',value:res.data})
+							if(res.status){
+								// 发送登录成功给主进程
+									ipcRenderer.send('into')
+								this.$router.push('/main/home')
+								this.$global.lcStorage('set',{name:'token',value:res.data.token})
+								this.$global.lcStorage('set',{name:'userInfo',value:res.data})
+							}else{
+								this.$message.error(res.message)
+							}
 						})		
 					}, 150)
-				}, 1500)  
+				}, 150)  
 		}
       // this.$http({
       //   url: 'http://192.168.41.220:2030',
@@ -77,7 +81,8 @@ export default{
 </script>
 <style lang="scss">
 	.login-wrap {
-		
+		height: 360px;
+		overflow: hidden;
 		border-top: 3px solid #714BDD;
 		display: flex;
 				
@@ -88,6 +93,7 @@ export default{
 			.content-1 {
 				width: 420px;
 				height: 313px;
+				display: block;
 			}
 			
 			.content-2 {

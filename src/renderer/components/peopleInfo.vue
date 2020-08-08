@@ -8,7 +8,7 @@
       </div>
       <div class="content">
         <div class="headimg">
-          <span>头像</span>
+          <span class="head-text">头像</span>
           <div class="headimg-info">
             <el-avatar class="top_bar-avatar c-pointer tx" :src="avatar">
               <i slot="default" class="el-icon-user-solid" style="font-size: 19px;"></i>
@@ -27,18 +27,29 @@
             />
           </div>
         </div>
-        <div class="name">
-          <span>姓名</span>
-          <input type="text" v-model="nickname" value=""/>
-        </div>
-        <div class="phone">
-          <span>联系电话</span>
-          <input type="text" v-model="mobile" />
-        </div>
-        <div class="bottom">
-          <el-button class="cancel" type="info" plain @click="action(0)">取消</el-button>
-          <el-button class="save" type="success" @click="action(1)">保存</el-button>
-        </div>
+        <el-form
+          :model="ruleForm"
+          status-icon
+          :rules="rules"
+          ref="ruleForm"
+          label-width="100px"
+          class="demo-ruleForm"
+        >
+          <el-form-item label="姓名" prop="name">
+            <el-input v-model="ruleForm.name"></el-input>
+          </el-form-item>
+          <el-form-item label="联系电话" prop="phone">
+            <el-input  v-model="ruleForm.phone" autocomplete="off"></el-input>
+          </el-form-item>
+          <div class="bottom">
+            <el-form-item>
+              <el-button class="cancel" type="info" plain @click="action(0)">取消</el-button>
+              <el-button class="save" type="success" @click="action(1)">保存</el-button>
+              <!-- <el-button type="primary" @click="submitForm('ruleForm')">提交</el-button>
+              <el-button @click="resetForm('ruleForm')">重置</el-button>-->
+            </el-form-item>
+          </div>
+        </el-form>
       </div>
     </div>
   </div>
@@ -46,74 +57,116 @@
 <script>
 export default {
   data() {
+    var validatePass = (rule, value, callback) => {
+      if (value === "") {
+        callback(new Error("请输入姓名"));
+      } 
+        callback();
+      
+    };
+    var validatePass2 = (rule, value, callback) => {
+      if (value === "") {
+        callback(new Error("请输入联系电话"));
+      } else {
+        callback();
+      }
+    //   else if (value.length !== this.ruleForm.pass) {
+    //     callback(new Error("两次输入密码不一致!"));
+    //   } 
+    };
     return {
       formData: new FormData(),
-      userInfo:'',
-      avatar:'',
-      id:'',
-      mobile:'',
-      nickname:'',
-      
+      userInfo: "",
+      avatar: "",
+      id: "",
+
+      ruleForm: {
+        name: "",
+        phone: "",
+      },
+      rules: {
+        name: [{ validator: validatePass, trigger: "blur" }],
+        phone: [{ validator: validatePass2, trigger: "blur" }],
+      },
     };
   },
   created() {
-    
-    let userInfo = this.$global.lcStorage('get',{name:'userInfo'})
-    let {avatar,id,mobile,nickname} = userInfo.user
-    this.userInfo = userInfo
-    this.avatar = avatar
-    this.id = id
-    this.mobile = mobile
-    this.nickname = nickname
+    let userInfo = this.$global.lcStorage("get", { name: "userInfo" });
+    let { avatar, id, mobile, nickname } = userInfo.user;
+    this.userInfo = userInfo;
+    this.avatar = avatar;
+    this.id = id;
+    this.ruleForm.phone = mobile;
+    this.ruleForm.name = nickname;
   },
   methods: {
-    
-    reviseData(parmas){
-        this.$api.POST_UPUSERINFO(parmas).then(res=>{
-            this.userInfo.user[parmas.attribute] = parmas.value
-            this.$global.lcStorage('set',{name:'userInfo',value:this.userInfo})
-            if(parmas.attribute=='avatar'){
-                this.$store.commit('avatar',parmas.value)
-            }
-        })
+      //轮询
+      submitForm(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+            
+        this.compare();
+        this.action(0);
+        } else {
+          //验证失败
+          return false;
+        }
+      });
+    },
+    reviseData(parmas) {
+
+      this.$api.POST_UPUSERINFO(parmas).then((res) => {
+
+        this.userInfo.user[parmas.attribute] = parmas.value;
+        this.$global.lcStorage("set", {
+          name: "userInfo",
+          value: this.userInfo,
+        });
+        if (parmas.attribute == "avatar") {
+          this.$store.commit("avatar", parmas.value);
+        }
+      });
     },
     //检验哪个数据修改进行请求
-    compare(){
-        let {avatar,id,mobile,nickname} = this.$global.lcStorage('get',{name:'userInfo'}).user
-        if(this.avatar!=avatar){
-            let parmas =  {
-                attribute:'avatar',
-                id,
-                value:this.avatar
-            }
-            this.reviseData(parmas)
-        }
-        if(this.nickname!=nickname){
-            let parmas =  {
-                attribute:'nickname',
-                id,
-                value:this.nickname
-            }
-            this.reviseData(parmas)
-        }
-        if(this.mobile!=mobile){
-            let parmas =  {
-                attribute:'mobile',
-                id,
-                value:this.mobile
-            }
-            this.reviseData(parmas)
+    compare() {
+      let { avatar, id, mobile, nickname } = this.$global.lcStorage("get", {
+        name: "userInfo",
+      }).user;
+      if (this.avatar != avatar) {
+        let parmas = {
+          attribute: "avatar",
+          id,
+          value: this.avatar,
+        };
+        
+        this.reviseData(parmas);
+      }
+      if (this.ruleForm.name != nickname) {
+        let parmas = {
+          attribute: "nickname",
+          id,
+          value: this.ruleForm.name,
+        };
 
-        }
+        this.reviseData(parmas);
+      }
+      if (this.ruleForm.phone != mobile) {
+        let parmas = {
+          attribute: "mobile",
+          id,
+          value:  this.ruleForm.phone,
+        };
+
+        this.reviseData(parmas);
+      }
     },
     //上传图片
     selectImg() {
       let file = this.$refs.file.files[0];
       this.formData.append("file", file);
       this.$api.POST_UPLOAD(this.formData).then((res) => {
-          this.avatar = res.message;
+        this.avatar = res.message;
         this.formData.delete("file");
-        console.log(this.userinfo)
       });
     },
     action(index) {
@@ -121,8 +174,10 @@ export default {
         this.$store.commit("showPopup", "");
         this.$store.commit("mb", false);
       } else if (index == 1) {
-        this.compare()
-        this.action(0)
+          //检验表单
+        this.submitForm("ruleForm");
+        
+        
       }
     },
   },
@@ -177,6 +232,13 @@ export default {
       display: flex;
       font-size: 16px;
       align-items: center;
+      .head-text {
+        width: 100px;
+        text-align: right;
+        padding-right: 12px;
+        font-size: 14px;
+        color: #606266;
+      }
       .headimg-info {
         width: 80px;
         height: 80px;
