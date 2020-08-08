@@ -14,7 +14,7 @@
 
       <span class="line"></span>
       <!-- @command="actions" -->
-      <el-dropdown  >
+      <el-dropdown  @command="actions">
         <el-avatar class="top_bar-avatar c-pointer" :src="avatar">
           <i slot="default" class="el-icon-user-solid" style="font-size: 19px;"></i>
         </el-avatar>
@@ -39,6 +39,8 @@
       ></div>
       <div @click="$electron.ipcRenderer.send('close')" style="font-size: 22px;" class="el-icon-close icon-close c-pointer c-active-opacity"></div>
     </div>
+    
+
   </div>
 </template>
 <script>
@@ -49,7 +51,16 @@ export default {
   data () {
     return {
       avatar: '',
-      isInFullScreen: false // 是否是全屏状态
+      isInFullScreen: false ,// 是否是全屏状态
+    }
+  },
+  created(){
+    this.avatar = this.$global.lcStorage('get',{name:'userInfo'}).user.avatar
+  },
+
+  watch:{
+    '$store.state.avatar':function(t,f){
+      this.avatar = t
     }
   },
   methods: {
@@ -57,6 +68,18 @@ export default {
       let msg = this.isInFullScreen ? 'unmaximize' : 'maximize'
       this.$electron.ipcRenderer.send(msg)
       this.isInFullScreen = !this.isInFullScreen
+    },
+    actions(e){
+      this.$store.commit('mb',true)
+      if(e==1){
+        this.$store.commit('showPopup','peopleInfo')
+        
+      }else if(e==2){
+        this.$store.commit('showPopup','resvisePwd')
+      }else if(e==3){
+
+      }
+      
     }
     // $electron.ipcRenderer.send('close')
     // $electron.ipcRenderer.send('mini')

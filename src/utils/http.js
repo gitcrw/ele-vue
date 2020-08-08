@@ -5,7 +5,7 @@ import qs from 'qs'
 
 axios.defaults.timeout = 20000
 axios.defaults.baseURL = 'http://192.168.41.220:2030'// 基本地址
-axios.defaults.headers['Content-Type']  =  'application/x-www-form-urlencoded; charset=UTF-8'
+axios.defaults.headers['Content-Type']  =  'application/x-www-form-urlencoded;charset=UTF-8'
 
 // http request 拦截器
 axios.interceptors.request.use(

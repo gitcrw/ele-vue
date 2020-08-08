@@ -71,6 +71,7 @@ export default {
       showData: "",
     };
   },
+
   methods: {
     getSearch(key) {
       if (this.index == 0) {
@@ -113,13 +114,15 @@ export default {
         this.showData = this.allProject;
       } else if (this.index == 1) {
         this.showFolderPro = this.folderProject;
-        // console.log(this.folderProject);
       }
     },
   },
   watch: {
-    allProject: function (to, from) {
-      this.showData = to;
+    "allProject": {
+      handler:function (to, from) {
+        this.showData = to;
+      },
+      immediate:true
     },
     "$store.state.images_path": function (to, from) {
       if (this.index == to.length) {
@@ -128,7 +131,6 @@ export default {
       }
       //路径更改清空searchKey
       this.$store.commit("searchKey", "");
-      console.log("清空searchKey");
       this.resetShow()
     },
     "$store.state.viewStyle": function (to, from) {
@@ -138,7 +140,6 @@ export default {
       if (to.length > 0) {
         this.getSearch(to);
       } else {
-        console.log("没有searchKey，重新渲染");
         this.resetShow()
       }
     },

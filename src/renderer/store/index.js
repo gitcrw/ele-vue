@@ -8,7 +8,10 @@ const store = new Vuex.Store({
       images_path:[],
       sy_path:[],
       viewStyle:'card',
-      searchKey:''
+      searchKey:'',
+      showPopup:'',
+      mb:false,
+      avatar:'',
     },
     mutations: {
       sy_path(state, payload) {
@@ -25,6 +28,15 @@ const store = new Vuex.Store({
       },
       searchKey(state,payload){
         state.searchKey = payload
+      },
+      showPopup(state,payload){
+        state.showPopup = payload
+      },
+      mb(state,payload){
+        state.mb = payload
+      },
+      avatar(state,payload){
+        state.avatar = payload
       }
     }
 })

@@ -1,6 +1,6 @@
 <template>
     <div id="main">
-      
+
         <div class="leftSide">
             <left-side :authority="authority"/>
         </div>
@@ -14,25 +14,41 @@
               </div>
             
         </div>
+        <!-- 遮罩层 -->
+        <div class="mb"  v-if="mb"></div>
+        <!-- 弹出框 -->
+        <transition mode="out-in">
+            <component :is="showPopup" ></component>
+        </transition>
+
+        
     </div>
 </template>
 <script>
 import qs from 'qs'
 import LeftSide from '../components/LeftSide'
 import TopMenu from '../components/TopMenu'
+import PeopleInfo from '../components/peopleInfo'
+import ResvisePwd from '../components/resvisePwd'
 export default {
   components: {
     LeftSide,
-    TopMenu
+    TopMenu,
+    PeopleInfo,
+    ResvisePwd
   },
   data () {
     return {
       authority: '', // 角色拥有的权限
-      allProject: ''
+      allProject: '',
+      showPopup:'',
+      mb:false
     }
   },
-  created () {
+  methods:{
     
+  },
+  created () {
     // 角色拥有的权限
     this.$api.GET_ROLEPROMISE().then(res => {
       console.log(res)
@@ -42,10 +58,20 @@ export default {
     this.$api.GET_ALLPROJECT().then(res => {
       this.allProject = res.data
     })
+  },
+  watch:{
+    '$store.state.showPopup':function(to,from){
+      this.showPopup = to
+      console.log(to)
+    },
+          '$store.state.mb':function(t,f){
+        this.mb = t
+      }
   }
 }
 </script>
 <style lang="scss" scoped>
+  .mb{background-color: #000;width:100%;height:100%;z-index:0;opacity: 0.5;left:0;top:0;position:fixed;}
     #main{
         width: 100%;
         height: 100%;
@@ -67,4 +93,16 @@ export default {
             overflow-y: auto;
         }
     }
+
+
+    .v-enter,
+.v-leave-to {
+
+  transform: translateY(-800px);
+}
+.v-enter-active,
+.v-leave-active {
+  z-index: 100;
+  transition: all .5s ease;
+}
 </style>
