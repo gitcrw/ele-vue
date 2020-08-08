@@ -6,10 +6,11 @@
         
   
     <div class="top-menu no-drag">
-      <div class="el-icon-s-tools c-pointer c-active-opacity" style="font-size: 22px;"></div>
+      <div class="el-icon-s-tools c-pointer c-active-opacity" style="font-size: 22px;" @click="showTool(1)"></div>
       <div
         class="el-icon-bell c-pointer c-active-opacity"
         style="font-size: 20px;font-weight: bold;"
+				@click="showTool(2)"
       ></div>
 
       <span class="line"></span>
@@ -80,7 +81,12 @@ export default {
 
       }
       
-    }
+    },
+		//菜鸟 控制首页两个辣鸡弹框显示隐藏
+		showTool (type) {
+		 console.log(type, 'type')
+		 this.$emit('handleShow', type)
+		}
     // $electron.ipcRenderer.send('close')
     // $electron.ipcRenderer.send('mini')
   }

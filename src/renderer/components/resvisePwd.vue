@@ -14,27 +14,25 @@
           label-width="100px"
           class="demo-ruleForm"
         >
+          <el-form-item label="旧密码" prop="oldpwd">
+            <el-input v-model="ruleForm.oldpwd"></el-input>
+          </el-form-item>
           <el-form-item label="密码" prop="pass">
             <el-input type="password" v-model="ruleForm.pass" autocomplete="off"></el-input>
           </el-form-item>
           <el-form-item label="确认密码" prop="checkPass">
             <el-input type="password" v-model="ruleForm.checkPass" autocomplete="off"></el-input>
           </el-form-item>
-          <el-form-item label="年龄" prop="age">
-            <el-input v-model.number="ruleForm.age"></el-input>
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary" @click="submitForm('ruleForm')">提交</el-button>
-            <el-button @click="resetForm('ruleForm')">重置</el-button>
-          </el-form-item>
-        </el-form>
 
-        <div class="bottom">
-          <el-button class="cancel" type="info" plain>取消</el-button>
-          <!-- <span class="cancel">取消</span> -->
-          <el-button class="save" type="success" @click="action(1)">保存</el-button>
-          <!-- <span class="save"></span> -->
-        </div>
+          <div class="bottom">
+            <el-form-item>
+              <el-button class="cancel" type="info" plain @click="action(0)">取消</el-button>
+              <el-button class="save" type="success" @click="action(1)">保存</el-button>
+              <!-- <el-button type="primary" @click="submitForm('ruleForm')">提交</el-button>
+              <el-button @click="resetForm('ruleForm')">重置</el-button>-->
+            </el-form-item>
+          </div>
+        </el-form>
       </div>
     </div>
   </div>
@@ -42,78 +40,45 @@
 <script>
 export default {
   data() {
-      var checkAge = (rule, value, callback) => {
-        if (!value) {
-          return callback(new Error('年龄不能为空'));
+    var checkOldPwd = (rule, value, callback) => {
+      if (!value) {
+        return callback(new Error("请输入旧密码"));
+      }
+      callback();
+    };
+    var validatePass = (rule, value, callback) => {
+      if (value === "") {
+        callback(new Error("请输入密码"));
+      } else if (value.length < 6) {
+        callback(new Error("请输入大于6位数的密码"));
+      } else {
+        if (this.ruleForm.checkPass !== "") {
+          this.$refs.ruleForm.validateField("checkPass");
         }
-        setTimeout(() => {
-          if (!Number.isInteger(value)) {
-            callback(new Error('请输入数字值'));
-          } else {
-            if (value < 18) {
-              callback(new Error('必须年满18岁'));
-            } else {
-              callback();
-            }
-          }
-        }, 1000);
-      };
-      var validatePass = (rule, value, callback) => {
-        if (value === '') {
-          callback(new Error('请输入密码'));
-        } else {
-          if (this.ruleForm.checkPass !== '') {
-            this.$refs.ruleForm.validateField('checkPass');
-          }
-          callback();
-        }
-      };
-      var validatePass2 = (rule, value, callback) => {
-        if (value === '') {
-          callback(new Error('请再次输入密码'));
-        } else if (value !== this.ruleForm.pass) {
-          callback(new Error('两次输入密码不一致!'));
-        } else {
-          callback();
-        }
-      };
+        callback();
+      }
+    };
+    var validatePass2 = (rule, value, callback) => {
+      if (value === "") {
+        callback(new Error("请再次输入密码"));
+      } else if (value !== this.ruleForm.pass) {
+        callback(new Error("两次输入密码不一致!"));
+      } else {
+        callback();
+      }
+    };
     return {
       id: "",
-      oldpwd: "",
-      newpwd: "",
-      conpwd: "",
       ruleForm: {
-          pass: '',
-          checkPass: '',
-          age: ''
-        },
-        rules: {
-          pass: [
-            { validator: validatePass, trigger: 'blur' }
-          ],
-          checkPass: [
-            { validator: validatePass2, trigger: 'blur' }
-          ],
-          age: [
-            { validator: checkAge, trigger: 'blur' }
-          ]
-        }
-    //   form: {
-    //     workMeals: "",
-    //   },
-    //   rules: {
-    //     workMeals: [
-    //       {
-    //         required: true,
-    //         message: "请输入工作餐费",
-    //         trigger: "blur",
-    //       },
-    //       {
-    //         pattern: /^[0-9]+(.[0-9]{2})?$/,
-    //         message: "请输入正确的数值",
-    //       },
-    //     ],
-    //   },
+        pass: "",
+        checkPass: "",
+        oldpwd: "",
+      },
+      rules: {
+        pass: [{ validator: validatePass, trigger: "blur" }],
+        checkPass: [{ validator: validatePass2, trigger: "blur" }],
+        oldpwd: [{ validator: checkOldPwd, trigger: "blur" }],
+      },
     };
   },
   created() {
@@ -121,9 +86,33 @@ export default {
     this.id = id;
   },
   methods: {
+    submitForm(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          //验证通过,发起请求
+          let params = {
+            id: this.id,
+            newPassword: this.ruleForm.pass,
+            oldPassword: this.ruleForm.oldpwd,
+          };
+          this.updatePwd(params);
+        } else {
+          //验证失败
+          return false;
+        }
+      });
+    },
     updatePwd(params) {
       this.$api.POST_UPDATEPWD(params).then((res) => {
-        console.log(res);
+        if (res.status) {
+          this.$message({
+            message: "修改成功",
+            type: "success",
+          });
+          this.action(0)
+        }else{
+            this.$message.error(res.message);
+        }
       });
     },
     action(index) {
@@ -131,17 +120,8 @@ export default {
         this.$store.commit("showPopup", "");
         this.$store.commit("mb", false);
       } else if (index == 1) {
-        if (this.newpwd !== this.conpwd) {
-          console.log("no");
-        } else {
-          //发起请求
-          let params = {
-            id: this.id,
-            newPassword: this.newpwd,
-            oldPassword: this.oldpwd,
-          };
-          this.updatePwd(params);
-        }
+        //检验表单
+        this.submitForm("ruleForm");
       }
     },
   },
