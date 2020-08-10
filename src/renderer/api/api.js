@@ -2,9 +2,13 @@ import {request} from '../../utils/http'
 //登录
 let LoginUrl = '/user/login'
 //角色权限
-let rolePromiseUrl = '/acl/role/api/authority'
+// let rolePromiseUrl = '/acl/role/api/authority'
+let rolePromiseUrl = 'https://www.fastmock.site/mock/de7c0e07d588123285a1984ef3d50570/api/acl/role/api/authority'
+
 //所有项目
-let allProjectUrl = '/project/all'
+// let allProjectUrl = '/project/all'
+let allProjectUrl = 'https://www.fastmock.site/mock/de7c0e07d588123285a1984ef3d50570/api/project/all'
+
 //文件项目
 let folderProjectUrl = '/folder/project'
 //进入文件夹

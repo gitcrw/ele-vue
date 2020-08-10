@@ -1,6 +1,6 @@
 'use strict'
 
-import { app, BrowserWindow, ipcMain, Menu, Tray } from 'electron'
+import { app, BrowserWindow, ipcMain, Menu, Tray,globalShortcut,ipcRenderer } from 'electron'
 
 /**
  * Set `__static` path to static files in production
@@ -12,10 +12,17 @@ if (process.env.NODE_ENV !== 'development') {
 //托盘对象
 var appTray = null;
 
+//窗口
 let mainWindow
+let loadDownWindow = false
 const winURL = process.env.NODE_ENV === 'development'
   ? `http://localhost:9080`
   : `file://${__dirname}/index.html`
+
+const downURL = process.env.NODE_ENV === 'development'
+  ? `http://localhost:9080#download`
+  : `file://${__dirname}/index.html#download`
+
 
 function createWindow() {
   Menu.setApplicationMenu(null)
@@ -45,8 +52,21 @@ function createWindow() {
       } //打开相应页面
     },
     {
-      label: '意见反馈',
-      click: function () { }
+      label: '下载管理',
+      click: function () { 
+        loadDownWindow?
+        loadDownWindow.show():
+        (
+          loadDownWindow = new BrowserWindow({
+            useContentSize: true,
+            width: 549,
+            height: 439,
+            frame: false,
+            resizable: false // 不可拖动大小
+          }),
+          loadDownWindow.loadURL(downURL)
+        )
+      }
     },
     {
       label: '帮助',
@@ -79,14 +99,31 @@ function createWindow() {
 
 
 
+//注册打包后的调试工具快捷键
+globalShortcut.register('CommandOrControl+F3',()=>{
+  mainWindow.openDevTools()
+})
 
+loadDownWindow = new BrowserWindow({
+  width: 549,
+  height: 439,
+  show: false, // 初始状态下不显示
+  resizable: false, // 不可拖动大小
+  frame: false, // 去掉默认结构
+  backgroundColor: '#ffffff', // 背景颜色
+  webPreferences: {
+    devTools: true
+  }
+})
+global.downloadWindowId = loadDownWindow.id;
+console.log(global.downloadWindowId)
+loadDownWindow.loadURL(downURL)
 
-
-
-
-
-
+//这是初始化函数
 }
+
+
+//接收渲染进程消息
 ipcMain.on('into', () => {
   mainWindow.setResizable(true)
   mainWindow.setSize(1280, 778)
@@ -105,8 +142,25 @@ ipcMain.on('maximize', () => {
   console.log('maximize')
 })
 ipcMain.on('close', () => {
+  
   mainWindow.destroy()
 })
+
+
+//下载
+ipcMain.on('download', () => {
+  loadDownWindow.show()
+  
+})
+
+ipcMain.on('close-download', () => {
+  loadDownWindow.hide()
+})
+
+
+
+
+
 
 app.on('ready', createWindow)
 

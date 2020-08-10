@@ -56,7 +56,7 @@ export default {
     }
   },
   created(){
-    this.avatar = this.$global.lcStorage('get',{name:'userInfo'}).user.avatar
+    // this.avatar = this.$global.lcStorage('get',{name:'userInfo'}).user.avatar
   },
 
   watch:{

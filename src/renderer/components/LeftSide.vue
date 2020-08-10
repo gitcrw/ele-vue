@@ -64,7 +64,6 @@ export default {
     }
   }
   .menu-box{
-    margin-top: 20px;
     color: #fff;
     // line-height: 50px;
     img{
@@ -73,10 +72,13 @@ export default {
       margin-left: 10px;
     }
     .menu-item{
-      
+      cursor: pointer;
       display: flex;
       align-items: center;
-      margin-bottom: 20px;
+      padding: 17px 0;
+    }
+    .menu-item:hover{
+      background-color: #262e4e;
     }
   }
 </style>
