@@ -48,7 +48,7 @@
       </div>
     </transition>
     <div v-if="index==2">
-      <sd :childFolderInfos="childFolderInfos"></sd>
+      <sd :childFolderInfos="childFolderInfos" :folderId="folderId"></sd>
     </div>
   </div>
 </template>
@@ -69,6 +69,7 @@ export default {
       childFolderInfos: "", //详细内容
       searchKey: "", //搜索关键字
       showData: "",
+      folderId:'',//文件夹id
     };
   },
 
@@ -96,6 +97,7 @@ export default {
           this.index = 1;
         });
       } else if (this.index === 1) {
+        this.folderId = id
         //进入展示图片界面
         this.$api.GET_FOLDERDETAIL({ folderId: id }).then((res) => {
           this.childFolderInfos = res.data.childFolderInfos;
@@ -148,14 +150,17 @@ export default {
 </script>
 <style lang="scss" scoped>
 .content {
-  padding-left: 30px;
+  padding:0 30px;
+
   .project {
     display: flex;
     justify-content: start;
     flex-wrap: wrap;
     .item-box {
-      width: 20%;
-      margin-bottom: 30px;
+      width: 189px;
+      height: 264px;
+      margin-right: 16px;
+      margin-bottom: 16px;
       display: flex;
       align-items: center;
       .item-info {

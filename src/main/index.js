@@ -112,7 +112,7 @@ loadDownWindow = new BrowserWindow({
   frame: false, // 去掉默认结构
   backgroundColor: '#ffffff', // 背景颜色
   webPreferences: {
-    devTools: true
+    devTools: false
   }
 })
 global.downloadWindowId = loadDownWindow.id;

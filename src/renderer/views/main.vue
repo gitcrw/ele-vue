@@ -88,6 +88,7 @@ export default {
     #main{
         width: 100%;
         height: 100%;
+        display: flex;
     }
     .leftSide{
         width: 14%;
@@ -99,9 +100,10 @@ export default {
         width: 86%;
         height: 100%;
         float: left;
+        padding-bottom: 54px;
         // background: 
         .content{
-            height: 92%;
+            height: 100%;
             background: #fff;
             overflow-y: auto;
         }

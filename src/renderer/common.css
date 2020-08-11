@@ -8,6 +8,8 @@ input{
 	border:none;
 } */
 
+textarea { resize: none;border: 0;}
+textarea:focus { outline: none; border: none;}
 .drag{
     -webkit-app-region: drag;
 }

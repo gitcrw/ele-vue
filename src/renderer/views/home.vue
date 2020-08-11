@@ -58,15 +58,17 @@ export default {
   display: flex;
   justify-content: start;
   flex-wrap: wrap;
+  padding: 0 20px;
   .item-box {
     height: 120px;
-    width: 25%;
+    width: 236px;
     display: flex;
     justify-content: center;
     overflow: hidden;
     margin-bottom: 30px;
+    margin-right: 25px;
     .item-info {
-      width: 85%;
+      width: 100%;
       background: rgb(246, 246, 246);
       border: 1px solid rgb(196, 196, 196);
       border-radius: 12px;

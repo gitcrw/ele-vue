@@ -12,6 +12,7 @@ const store = new Vuex.Store({
       showPopup:'',
       mb:false,
       avatar:'',
+      taskId:'',
     },
     mutations: {
       sy_path(state, payload) {
@@ -37,6 +38,9 @@ const store = new Vuex.Store({
       },
       avatar(state,payload){
         state.avatar = payload
+      },
+      taskId(state,payload){
+        state.taskId = payload
       }
     }
 })

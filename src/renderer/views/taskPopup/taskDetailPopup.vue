@@ -21,8 +21,8 @@
 			</ul>
 			<div class="task-components">
 				<keep-alive>
-					<base-information v-if="contentType === 1" ></base-information>
-					<folder-content v-else-if="contentType === 2"></folder-content>
+					<base-information  v-if="contentType === 1" ></base-information>
+					<folder-content v-if="contentType === 2" :type="type"></folder-content>
 				</keep-alive>
 			</div>
 		</div>
@@ -31,12 +31,13 @@
 
 <script>
 	import BaseInformation from '@/views/taskPopup/baseInformation';
-	import FolderContent from '@/views/taskPopup/folderContent';
+	import FolderContent from '../../components/showDetail';
 	export default {
 		data() {
 			return {
 				visible: false,
-				contentType: 1
+				contentType: 1,
+				type:2
 			}
 		},
 		mounted() {},

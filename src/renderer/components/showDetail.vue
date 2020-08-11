@@ -1,7 +1,7 @@
 <template>
   <div>
-    <div v-if="childFolderInfos">
-      <div v-for="file in childFolderInfos" :key="file.id" class="out-item-box">
+    <div v-if="childFolderInfos||type==2">
+      <div v-for="(file,index) in childFolderInfos" :key="file.id" class="out-item-box">
         <div>{{file.name}}</div>
         <div class="item-box">
           <div v-for="item in file.fileInfos" :key="item.id" class="file-item-box">
@@ -9,11 +9,25 @@
             <p :title="item.name">名称：{{item.name}}</p>
             <p>大小：{{size(item.size)}}kb</p>
             <p>作者：{{item.author}}</p>
-            <i class="el-icon-download icon_down" @click="down(item.name,item.id,item.path)"></i>
+            <i class="c-pointer el-icon-download icon_down" @click="down(item.name,item.id,item.path)"></i>
           </div>
           <div class="dload">
-            <div class="sc">上传</div>
-            <div class="xz" @click="alldown(file.id)">下载</div>
+            <div class="sc">
+              <img src="../assets/images/upload.svg" alt />
+              <span>上传</span>
+              <input
+                class="file"
+                type="file"
+                :ref="'file'+index"
+                title=" "
+                :multiple="multiple"
+                @change="upload(index,file.id)"
+              />
+            </div>
+            <div class="xz" @click="alldown(file.id)">
+              <img src="../assets/images/download.svg" alt />
+              <span>下载</span>
+            </div>
           </div>
         </div>
       </div>
@@ -21,49 +35,64 @@
   </div>
 </template>
 <script>
-
-import { remote, ipcRenderer } from 'electron'
-
+import { remote, ipcRenderer } from "electron";
+import { Message } from 'element-ui'
 import { log } from "util";
 
-
 export default {
-  props: ["childFolderInfos"],
+  props: ["childFolderInfos", "folderId","type"],
 
   data() {
     return {
       tasks: [],
-
+      multiple: true,
     };
   },
-
+  created() {
+    console.log(this.type);
+  },
   methods: {
-    // readTask(data) {
-    //   readFile(this.default_path + "\\download.json")
-    //     .then((res) => {
-    //       this.tasks = res;
-    //       this.tasks.push(data);
-    //       writeFile(this.default_path + "\\download.json", this.tasks);
-    //     })
-    // },
     size(size) {
       return (size / 1024).toFixed(2);
     },
-
-    down(name, id,imgUrl) {
-      const wid = remote.getGlobal('downloadWindowId')
-      console.log(name, id,imgUrl)
-       //显示下载窗口
+    //上传文件,id是当前例如原图这种的id
+    upload(index, id) {
+      let xx = "file" + index;
+      let files = this.$refs[xx][0].files;
+      //不允许超过50张
+      if (files.length > 50) {
+        Message.error('上传图片不能超过50张')
+      } else {
+        for (let i = 0; i < files.length; i++) {
+          console.log(i, files[i]);
+          let formData = new FormData();
+          formData.append("file", files[i]);
+          formData.append("folderId", id);
+          this.$api.POST_UPLOADFOLDER(formData).then((res) => {
+            //更新视图
+            this.childFolderInfos[index].fileInfos.push(res.data)
+          });
+        }
+      }
+    },
+    down(name, id, imgUrl) {
+      const wid = remote.getGlobal("downloadWindowId");
+      console.log(name, id, imgUrl);
+      //显示下载窗口
       ipcRenderer.send("download");
       //发送数据
-      remote.BrowserWindow.fromId(wid).webContents.send('download-task', {name,id,imgUrl})
+      remote.BrowserWindow.fromId(wid).webContents.send("download-task", {
+        name,
+        id,
+        imgUrl,
+      });
     },
     alldown(id) {
       let arr = this.childFolderInfos.filter((item) => {
         return item.id == id;
       })[0].fileInfos;
       for (let key of arr) {
-        this.down(key.name,key.id,key.path);
+        this.down(key.name, key.id, key.path);
       }
     },
   },
@@ -80,9 +109,9 @@ export default {
   justify-content: start;
   .file-item-box {
     border-radius: 6px;
-    border: 1px solid rgb(198, 198, 198);
     background: rgb(243, 245, 235);
-    width: 15%;
+    width: 144px;
+    height: 192px;
     display: flex;
     flex-direction: column;
     margin-top: 20px;
@@ -115,18 +144,32 @@ export default {
   .dload {
     margin-top: 20px;
     min-width: 30px;
-    height: 200px;
     overflow: hidden;
     // margin-left: 10px;
     > div {
-      width: 80px;
-      height: 80px;
+      width: 100px;
+      height: 100px;
       background: #fff;
       border: 1px solid #ccc;
       float: left;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      border: 1px solid #f1f1f1;
+      border-radius: 4px;
+      cursor: pointer;
     }
     .sc {
       margin-right: 10px;
+      position: relative;
+      .file{
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        cursor: pointer;
+        opacity: 0;
+      }
     }
   }
   .file-item-box:hover .icon_down {

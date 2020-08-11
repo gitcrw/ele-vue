@@ -1,17 +1,27 @@
 <template>
 	<div class="task-box" >
-		<ct :allProject="allProject" @showPopup="handleCreateTask"></ct>
+		<div class="top">
+			<div class="top-left" v-if="total">
+				<span @click="action(2)" :class="type==2?'active':''">我执行的({{total.executor}})</span>
+				<span @click="action(1)" :class="type==1?'active':''">我创建的({{total.creator}})</span>
+				<span @click="action(3)" :class="type==3?'active':''">我参与的({{total.partaker}})</span>
+			</div>
+			<div class="top-right">
+				<span>筛选</span>
+				<span>新建任务</span>
+			</div>
+		</div>
 		<div class="task">
-			<div class="task-item" v-for="item in 3" :key="item"> 
+			<div class="task-item" v-for="item in taskData" :key="item.id"> 
 				<el-checkbox></el-checkbox>
 				<span class="btn">紧急</span>
-				<span class="title c-pointer" @click="showDetail">618天猫活动</span>
+				<span class="title c-pointer" @click="showDetail(item.id)">{{item.title}}</span>
 				<div class="content">
 					
 					<ul class="content-box">
 						<li class="content_item">
 							<img :src="require('@/assets/images/project_icon.svg')"/>
-							<span style="margin: 0 5px;">项目：专题活动</span>
+							<span style="margin: 0 5px;">项目：{{item.projectName}}</span>
 						</li>
 						<li class="content_item">
 							<img :src="require('@/assets/images/fujian_icon.svg')"/>
@@ -40,12 +50,37 @@
 		props: ["allProject"],
 		data() {
 			return {
-				isShowTaskPopup: false
+				isShowTaskPopup: false,
+				taskData:[],
+				type:2,
+				total:'',
 			}
 		},
+		created(){
+			let params = {type:2,pageNumber:1}
+			this.ajaxData(params)
+		},
 		methods: {
-			showDetail () {
+			ajaxData(params){
+				this.$api.GET_TASKS(params).then(res=>{
+					this.total = res.data.relateMeDataResult
+					this.taskData = res.data.assignmentPageArrayListResults
+					console.log(res)
+				})
+			},
+			action(type){
+				this.type = type
+				this.taskData = null
+				let params = {type,pageNumber:1}
+				this.ajaxData(params)
+			},
+			showDetail (id) {
+				this.$store.commit('taskId',id)
 				this.$refs.detail.visible = true
+
+				// this.$api.GET_TASKSDETAIL2(params).then(res=>{
+				// 	console.log(res)
+				// })
 			},
 			/**
 			 * 显示新建任务弹框
@@ -63,15 +98,46 @@
 	}
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
+.active{
+	color: blue;
+}
 	.task-box {
 		width: 100%;
-		// height: 90%;
+		overflow: hidden;
+		height: 100%;
+		.top{
+			padding: 8px 15px 0 24px;
+			width: 100%;
+			line-height: 40px;
+			height: 40px;
+			overflow: hidden;
+			// background: #fff;
+			.top-left{
+				float: left;
+				span{
+						margin-right: 20px;
+						cursor: pointer;
+				}
+				// margin-right: 10px;
+			}
+			.top-right{
+				float: right;
+			}
+		}
+
+
+
+
+
+
 		.task {
+			height: 100%;
+			overflow-y: auto;
 			margin-left: 10px;
 			display: flex;
 			flex-direction: column;
-			
+			padding-bottom: 30px;
 			.task-item {	
 				text-align: left;
 				align-items: center;
