@@ -21,6 +21,10 @@ input{
 
       user-select:none; 
 }
+.no-border {
+  border: none;
+  outline: none;
+}
 ul li {
   list-style-type: none;
 }
