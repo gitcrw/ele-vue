@@ -42,15 +42,11 @@
 		mounted() {},
 		methods: {
 			changeContent(type) {
-				if (type === 2 && !this.isInitFolderContent) this.initFolderContent()
 				this.contentType = type
-			},
-			isInitFolderContent () {
-				console.log('FolderContent')
 			},
 			onClose() {
 				this.contentType = 1,
-				console.log(this.contentType,'this.contentType')
+				console.log(this.contentType, 'this.contentType')
 			}
 		},
 		components: {
