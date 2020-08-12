@@ -1,15 +1,18 @@
 <template>
   <div>
-    <div v-if="childFolderInfos||type==2">
+    <div v-if="type==1||type==2">
       <div v-for="(file,index) in childFolderInfos" :key="file.id" class="out-item-box">
         <div>{{file.name}}</div>
         <div class="item-box">
           <div v-for="item in file.fileInfos" :key="item.id" class="file-item-box">
-            <img class="img" :src="fp+'/'+item.id" alt />
+            <div class="img-box"> <img class="img" :src="fp+'/'+item.id" alt /></div>
             <p :title="item.name">名称：{{item.name}}</p>
             <p>大小：{{size(item.size)}}kb</p>
             <p>作者：{{item.author}}</p>
-            <i class="c-pointer el-icon-download icon_down" @click="down(item.name,item.id,item.path)"></i>
+            <i
+              class="c-pointer el-icon-download icon_down"
+              @click="down(item.name,item.id,item.path)"
+            ></i>
           </div>
           <div class="dload">
             <div class="sc">
@@ -36,22 +39,44 @@
 </template>
 <script>
 import { remote, ipcRenderer } from "electron";
-import { Message } from 'element-ui'
+import { Message } from "element-ui";
 import { log } from "util";
 
 export default {
-  props: ["childFolderInfos", "folderId","type"],
+  props: ["folderId", "type"],
 
   data() {
     return {
       tasks: [],
       multiple: true,
+      childFolderInfos: "",
     };
   },
   created() {
     console.log(this.type);
+    let folderId;
+    if (this.type == 1) {
+      folderId = this.folderId;
+    } else if (this.type == 2) {
+      folderId = this.$store.state.taskofProId;
+    }
+    this.ajaxData({ folderId });
+  },
+  watch: {
+    //防止数据还未请求回来
+    "$store.state.taskofProId":function(t,f) {
+      //进入展示图片界面
+      this.ajaxData({ folderId:t })
+    },
   },
   methods: {
+    ajaxData(params) {
+      //进入展示图片界面
+      this.$api.GET_FOLDERDETAIL(params).then((res) => {
+        this.childFolderInfos = res.data.childFolderInfos;
+        console.log(res.data.childFolderInfos);
+      });
+    },
     size(size) {
       return (size / 1024).toFixed(2);
     },
@@ -61,7 +86,7 @@ export default {
       let files = this.$refs[xx][0].files;
       //不允许超过50张
       if (files.length > 50) {
-        Message.error('上传图片不能超过50张')
+        Message.error("上传图片不能超过50张");
       } else {
         for (let i = 0; i < files.length; i++) {
           console.log(i, files[i]);
@@ -70,7 +95,9 @@ export default {
           formData.append("folderId", id);
           this.$api.POST_UPLOADFOLDER(formData).then((res) => {
             //更新视图
-            this.childFolderInfos[index].fileInfos.push(res.data)
+            let data = res.data
+            data.path = res.data.url
+            this.childFolderInfos[index].fileInfos.push(res.data);
           });
         }
       }
@@ -125,10 +152,16 @@ export default {
       right: 10px;
       display: none;
     }
-    .img {
+    .img-box{
       width: 100px;
       height: 100px;
       margin: 0 auto;
+      .img {
+      width: 100px;
+      height: 100px;
+      display: block;
+      margin: 0 auto;
+      }
     }
     p {
       font-size: 14px;
@@ -163,7 +196,7 @@ export default {
     .sc {
       margin-right: 10px;
       position: relative;
-      .file{
+      .file {
         position: absolute;
         width: 100%;
         height: 100%;

@@ -122,6 +122,7 @@ export default {
     linstenDownloadTask(e, { name, id, imgUrl }) {
       console.log(this.isDownLoad(imgUrl))
       //判断是否可以下载
+      console.log("可以下载");
       if (this.isDownLoad(imgUrl).length==0) {
         let url = this.fd + id;
         let path =

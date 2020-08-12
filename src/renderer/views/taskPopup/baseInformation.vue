@@ -62,18 +62,21 @@
           </div>
           <span class="right">
             <el-popover placement="bottom" width="200" trigger="click">
-              <div class="priority">
+								<div class="priority">
                 <div
-                  :class="`${item.priority==baseData.priority.itemSortValue?'priority'+item.priority:''}`"
                   v-for="(item,index) in circle"
                   @click="selectPriority(item)"
+									:class="item.priority==priority.priority?'priority'+item.priority:''"
                   :style="`color:${item.background};border-color:${item.background}`"
                 >{{item.title}}</div>
               </div>
               <div
                 slot="reference"
-                :style="`color:#FFFFFF;display: flex; justify-content: center; align-items: center; width: 30px;height: 30px;border-radius: 50%;background-color: ${priority?priority.background:baseData.priority.itemOtherValue};`"
-              >{{priority?priority.title:baseData.priority.itemName}}</div>
+								class="critl"
+								
+                :style="`background-color: ${priority?priority.background:(baseData.priority?baseData.priority.itemOtherValue:'#BBB8B8')}`"
+              >{{priority?priority.title:(baseData.priority?baseData.priority.itemName:'无')}}</div>
+					
             </el-popover>
           </span>
         </li>
@@ -148,7 +151,9 @@ export default {
       description: "",
       priority: "", //优先级
       content: "", //发表评论内容
-      comment: [], //评论
+			comment: [], //评论
+			projectId:'',//项目id
+
       circle: [
         {
           background: "#ed5050",
@@ -232,7 +237,12 @@ export default {
     },
     //选择优先级
     selectPriority(priority) {
-      this.baseData.priority.itemSortValue = priority.priority;
+			this.baseData.priority = {
+				itemName:priority.title,
+				itemOtherValue:priority.background,
+				itemSortValue:priority.priority
+			}
+      
 			this.priority = priority;
 			let params = {id: this.id,priority:priority.priority}
 			this.ajaxData(params)
@@ -252,7 +262,10 @@ export default {
     let id = this.$store.state.taskId;
     this.id = id;
     this.$api.GET_TASKSDETAIL({ id }).then((res) => {
-      this.baseData = res.data;
+			this.baseData = res.data;
+			//存到store里
+			let taskofProId = res.data.projectInfo.folderInfo.id
+			this.$store.commit('taskofProId',taskofProId)
 		});
 		this.$api.GET_TASKSPLLIST({id}).then(res=>{
 			this.comment = res.data
@@ -264,6 +277,9 @@ export default {
 <style lang="scss" scoped>
 .content-itembz {
   // display: block !important;
+}
+.critl{
+	color:#FFFFFF;display: flex; justify-content: center; align-items: center; width: 30px;height: 30px;border-radius: 50%;
 }
 .priority {
   display: flex;

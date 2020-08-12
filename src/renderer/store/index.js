@@ -13,6 +13,7 @@ const store = new Vuex.Store({
       mb:false,
       avatar:'',
       taskId:'',
+      taskofProId:'',//当前任务所在的项目id
     },
     mutations: {
       sy_path(state, payload) {
@@ -41,7 +42,10 @@ const store = new Vuex.Store({
       },
       taskId(state,payload){
         state.taskId = payload
-      }
+      },
+      taskofProId(state,payload){
+        state.taskofProId = payload
+      },
     }
 })
 

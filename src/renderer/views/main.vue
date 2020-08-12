@@ -84,24 +84,24 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+
   .mb{background-color: #000;width:100%;height:100%;z-index:0;opacity: 0.5;left:0;top:0;position:fixed;}
     #main{
         width: 100%;
         height: 100%;
-        display: flex;
     }
     .leftSide{
-        width: 14%;
+        width:185px;
         height: 100%;
         background: rgb(55, 62, 91);
         float: left;
     }
     .rightSide{
-        width: 86%;
+         overflow-x: auto;
+         overflow-y: hidden;
         height: 100%;
-        float: left;
-        padding-bottom: 54px;
         // background: 
+        padding-bottom: 54px;
         .content{
             height: 100%;
             background: #fff;
@@ -110,14 +110,14 @@ export default {
     }
 
 
-    .v-enter,
-.v-leave-to {
+//     .v-enter,
+// .v-leave-to {
 
-  transform: translateY(-800px);
-}
-.v-enter-active,
-.v-leave-active {
-  z-index: 100;
-  transition: all .5s ease;
-}
+//   transform: translateY(-800px);
+// }
+// .v-enter-active,
+// .v-leave-active {
+//   z-index: 100;
+//   transition: all .5s ease;
+// }
 </style>

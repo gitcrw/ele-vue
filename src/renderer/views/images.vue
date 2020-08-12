@@ -48,7 +48,7 @@
       </div>
     </transition>
     <div v-if="index==2">
-      <sd :childFolderInfos="childFolderInfos" :folderId="folderId"></sd>
+      <sd :folderId="folderId" :type="type"></sd>
     </div>
   </div>
 </template>
@@ -70,6 +70,7 @@ export default {
       searchKey: "", //搜索关键字
       showData: "",
       folderId:'',//文件夹id
+      type:1,
     };
   },
 
@@ -99,11 +100,8 @@ export default {
       } else if (this.index === 1) {
         this.folderId = id
         //进入展示图片界面
-        this.$api.GET_FOLDERDETAIL({ folderId: id }).then((res) => {
-          this.childFolderInfos = res.data.childFolderInfos;
-          this.index = 2;
-          console.log(this.childFolderInfos);
-        });
+        this.index=2
+
       }
       let obj = {
         index: this.index + 1,
